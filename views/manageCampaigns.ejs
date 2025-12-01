@@ -1,0 +1,118 @@
+<%- include("partials/header.ejs") %>
+
+<main class="admin-main">
+  <!-- Toolbar titre + actions -->
+  <div class="admin-toolbar">
+    <h1 class="admin-title m-0">Gérer les campagnes</h1>
+    <div class="flex gap-1">
+      <a class="button" href="/admin/campaigns/create">+ Créer une campagne</a>
+      <a class="button ghost" href="/admin">Retour admin</a>
+    </div>
+  </div>
+  <% if (campaigns.length === 0) { %>
+    <p class="errorMessage">Aucune campagne ne correspond à votre recherche.</p>
+  <% } %>
+  <% if (successMessage) { %>
+    <p class="successMessage"><%= successMessage %></p>
+  <% } %>
+  <% if (errorMessage) { %>
+    <p class="errorMessage"><%= errorMessage %></p>
+  <% } %>
+  <form class="admin-filters" action="/admin/campaigns" method="GET" novalidate>
+  <div class="filters-row">
+
+    <div class="form-row">
+      <label for="q">Recherche</label>
+      <input type="text" id="q" name="q" placeholder="Nom ou description">
+    </div>
+
+    <div class="form-row">
+      <label for="status">Statut</label>
+      <select id="status" name="status">
+        <option value="">Tous</option>
+        <option value="active">Actives</option>
+        <option value="upcoming">À venir</option>
+        <option value="ended">Terminées</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="country_id">Pays</label>
+      <select id="country_id" name="country_id">
+        <option value="">Tous</option>
+        <% countries.forEach(c => { %>
+          <option value="<%= c.id %>"><%= c.name %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="from">Début min</label>
+      <input type="date" id="from" name="from">
+    </div>
+    <div class="form-row">
+      <label for="to">Fin max</label>
+      <input type="date" id="to" name="to">
+    </div>
+
+    <div class="form-row">
+      <label for="sort">Trier par</label>
+      <select id="sort" name="sort">
+        <option value="name_asc">Nom (A → Z)</option>
+        <option value="name_desc">Nom (Z → A)</option>
+        <option value="begin_date_asc">Début (croissant)</option>
+        <option value="begin_date_desc">Début (décroissant)</option>
+        <option value="end_date_asc">Fin (croissant)</option>
+        <option value="end_date_desc">Fin (décroissant)</option>
+      </select>
+    </div>
+
+    <div class="form-row actions">
+      <button class="button" type="submit">Filtrer</button>
+      <a class="button ghost" href="/admin/campaigns">Réinitialiser</a>
+    </div>
+  </div>
+</form>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Description</th>
+          <th>Date de début</th>
+          <th>Date de fin</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% campaigns.forEach(campaign => { %>
+          <tr>
+            <td><%= campaign.name %></td>
+            <td class="line-clamp-2" data-tooltip="<%= (campaign.description || '').replace(/"/g, '&quot;') %>">
+              <%= campaign.description %>
+            </td>
+
+            <td><%= campaign.begin_date %></td>
+            <td><%= campaign.end_date %></td>
+            <td>
+              <% if (campaign.image) { %>
+                <img src="<%= campaign.image %>" alt="<%= campaign.name %>" width="43" height="43">
+              <% } else { %>
+                <em>Aucune image</em>
+              <% } %>
+            </td>
+            <td class="actions">
+              <a href="/admin/campaigns/edit/<%= campaign.id %>" class="button outline">Modifier</a>
+              <form action="/admin/campaigns/delete/<%= campaign.id %>" method="POST" style="display:inline" onsubmit="return confirm('Supprimer définitivement « <%= campaign.name %> » ?');">
+                <button class="button danger" type="submit">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include("partials/footer.ejs") %>

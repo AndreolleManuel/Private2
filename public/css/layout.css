@@ -1,0 +1,132 @@
+/* ====== General ======= */
+
+html {
+  position: relative;
+}
+
+body {
+  width: 80%;
+  min-height: 100vh;
+  
+  padding: 4rem 0;
+  margin: 0 auto;
+
+  background: linear-gradient(var(--color-green) 0%, var(--color-dark-green) 100%);
+  color: white;
+
+  font-family: Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+section {
+  margin: 8rem 0;
+}
+
+@media screen and (max-width: 720px) {
+  section {
+    margin: 4rem 0;
+  }
+}
+
+/* ======== Header ======== */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header > a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  font-size: 2rem;
+  color: var(--color-dark-green);
+  font-weight: bold;
+}
+
+header img  {
+  height: 3rem;
+  width: auto;
+}
+
+header nav {
+  color: white;
+}
+
+header ul {
+  display: flex;
+  gap: 2rem;
+}
+
+header li a {
+  font-size: 1.3rem;
+}
+
+header li a:hover {
+  color: var(--color-dark-green);
+}
+
+/* ======== Header burger menu (on small screen) ======== */
+
+header button {
+  background-color: inherit;
+  color: white;
+  height: 3rem;
+
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.logout {
+  color: var(--color-dark-green);
+}
+
+@media screen and (min-width: 1280px) {
+  /* Hide "menu button" on large screen by default */
+  header button {
+      display: none;
+  }
+
+  /* Hide "Home link" on large screen by default */
+  header ul > :first-child {
+      display: none;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  /* Hide all menu links on small screen by default */
+  header ul {
+    display: none;
+  }
+}
+
+/* Bonus : extra animation */
+@keyframes menu-slide-in {
+  from {
+    width:  0vw;
+    padding: 4rem 0rem;
+    color: var(--color-dark);
+  }
+}
+
+header nav.expanded ul {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 1rem;
+}
+
+header nav.expanded a {
+  color: inherit;
+}
+
+/* ===========  Footer =========== */
+
+footer {
+  text-align: right;
+}

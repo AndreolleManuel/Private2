@@ -1,0 +1,30 @@
+<%- include("partials/header.ejs") %>
+
+<main class="admin-main">
+  <div class="admin-card" style="max-width: 400px; margin-inline: auto;">
+    <h1 class="admin-title m-0">Connexion administrateur</h1>
+    <p class="admin-sub">Veuillez saisir vos identifiants pour accéder au back office.</p>
+
+    <% if (errorMessage) { %>
+      <p class="errorMessage mt-1"><%= errorMessage %></p>
+    <% } %>
+
+    <form action="" method="POST" class="admin-form mt-2" novalidate>
+      <div class="form-row">
+        <label for="mail">Adresse e-mail</label>
+        <input type="email" name="mail" id="mail" placeholder="exemple@greenroots.com" required>
+      </div>
+
+      <div class="form-row">
+        <label for="password">Mot de passe</label>
+        <input type="password" name="password" id="password" placeholder="••••••••" required>
+      </div>
+
+      <div class="form-actions">
+        <button class="button" type="submit">Se connecter</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<%- include("partials/footer.ejs") %>

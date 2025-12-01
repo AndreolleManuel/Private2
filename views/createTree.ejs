@@ -1,0 +1,74 @@
+<%- include ("partials/header.ejs") %>
+
+<main class="admin-main">
+  <div class="admin-card">
+    <h1 class="admin-title m-0">Créer un nouvel arbre</h1>
+    <p class="admin-sub">Remplissez le formulaire ci-dessous.</p>
+    <% if (errorMessage) { %>
+      <p class="errorMessage mt-1"><%= errorMessage %></p>
+    <% } %>
+  </div>
+
+  <form class="admin-card admin-form" action="" method="POST" enctype="multipart/form-data" novalidate>
+    <div class="form-row">
+      <label for="name">Nom de l'arbre</label>
+      <input type="text" name="name" id="name" required>
+    </div>
+
+    <div class="form-row">
+      <label for="latin_name">Nom latin</label>
+      <input type="text" name="latin_name" id="latin_name">
+    </div>
+
+    <div class="form-row inline">
+      <div>
+        <label for="price">Prix (en €)</label>
+        <input type="number" id="price" name="price" step="0.01" min="0" required>
+      </div>
+      <div>
+        <label for="quantity">Quantité restante</label>
+        <input type="number" id="quantity" name="quantity" min="0" required>
+      </div>
+    </div>
+
+    <div class="form-row inline">
+      <div>
+        <label for="stock">Stock initial</label>
+        <input type="number" id="stock" name="stock" min="0" required>
+      </div>
+      <div>
+        <label for="specie_id">Espèce</label>
+        <select id="specie_id" name="specie_id" required>
+          <option value="" disabled selected>Choisir une espèce</option>
+          <% for (const specie of (Array.isArray(species) ? species : [])) { %>
+            <option value="<%= specie.id %>"><%= specie.name %></option>
+          <% } %>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label for="campaign_id">Campagne</label>
+      <select id="campaign_id" name="campaign_id" required>
+        <option value="" disabled selected>Choisir une campagne</option>
+        <% for (const campaign of campaigns) { %>
+          <option value="<%= campaign.id %>"><%= campaign.name %></option>
+        <% } %>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="image">Image de l’arbre...</label>
+      <input type="file" name="image" id="image" accept="image/*">
+      <label for="image">...ou lien d'image</label>
+      <input type="url" name="image_url" id="image_url" placeholder="https://...">
+    </div>
+
+    <div class="form-actions">
+      <button class="button" type="submit">Créer</button>
+      <a class="button ghost" href="/admin">Retour à l’administration</a>
+    </div>
+  </form>
+</main>
+
+<%- include ("partials/footer.ejs") %>

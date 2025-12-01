@@ -1,0 +1,112 @@
+<%- include("partials/header.ejs") %>
+
+<main class="admin-main">
+  <div class="admin-toolbar">
+    <h1 class="admin-title m-0">Gérer les arbres</h1>
+    <div class="flex gap-1">
+      <a class="button" href="/admin/trees/create">+ Créer un arbre</a>
+      <a class="button ghost" href="/admin">Retour admin</a>
+    </div>
+  </div>
+
+  <% if (trees.length === 0) { %>
+    <p class="errorMessage">Aucun arbre ne correspond à votre recherche.</p>
+  <% } %>
+  <% if (errorMessage) { %>
+    <p class="errorMessage"><%= errorMessage %></p>
+  <% } %>
+  <% if (successMessage) { %>
+    <p class="successMessage"><%= successMessage %></p>
+  <% } %>
+  <form class="admin-filters" action="/admin/trees" method="GET" novalidate>
+  <div class="filters-row">
+  
+    <div class="form-row">
+      <label for="q">Recherche</label>
+      <input type="text" id="q" name="q" placeholder="Nom ou nom latin">
+    </div>
+
+    <div class="form-row">
+      <label for="specie_id">Espèce</label>
+      <select id="specie_id" name="specie_id">
+        <option value="">Toutes</option>
+        <% species.forEach(s => { %>
+          <option value="<%= s.id %>"><%= s.name %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="campaign_id">Campagne</label>
+      <select id="campaign_id" name="campaign_id">
+        <option value="">Toutes</option>
+        <% campaigns.forEach(c => { %>
+          <option value="<%= c.id %>"><%= c.name %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="sort">Trier par</label>
+      <select id="sort" name="sort">
+        <option value="name_asc">Nom (A → Z)</option>
+        <option value="name_desc">Nom (Z → A)</option>
+        <option value="price_asc">Prix (croissant)</option>
+        <option value="price_desc">Prix (décroissant)</option>
+        <option value="quantity_asc">Qté (croissante)</option>
+        <option value="quantity_desc">Qté (décroissante)</option>
+        <option value="stock_asc">Stock (croissant)</option>
+        <option value="stock_desc">Stock (décroissant)</option>
+      </select>
+    </div>
+
+    <div class="form-row actions">
+      <button class="button" type="submit">Filtrer</button>
+      <a class="button ghost" href="/admin/trees">Réinitialiser</a>
+    </div>
+  </div>
+</form>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Nom de l'arbre</th>
+          <th>Espèce</th>
+          <th>Campagne associée</th>
+          <th>Prix</th>
+          <th>Quantité restante</th>
+          <th>Stock initial</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% trees.forEach(tree => { %>
+          <tr>
+            <td><%= tree.name %></td>
+            <td><%= tree.specie.name %></td>
+            <td><%= tree.campaign.name %></td>
+            <td><%= (tree.price/100).toFixed(2) %> €</td>
+            <td><%= tree.quantity %></td>
+            <td><%= tree.stock %></td>
+            <td>
+              <% if (tree.image) { %>
+                <img src="<%= tree.image %>" alt="<%= tree.name %>" width="43" height="43">
+              <% } else { %>
+                <em>Aucune image</em>
+              <% } %>
+            </td>
+            <td class="actions">
+              <a href="/admin/trees/edit/<%= tree.id %>" class="button outline">Modifier</a>
+              <form action="/admin/trees/delete/<%= tree.id %>" method="POST" style="display:inline" onsubmit="return confirm('Supprimer définitivement « <%= tree.name %> » ?');">
+                <button class="button danger" type="submit">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include("partials/footer.ejs") %>

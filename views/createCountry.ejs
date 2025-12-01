@@ -1,0 +1,25 @@
+<%- include ("partials/header.ejs") %>
+
+<main class="admin-main">
+  <div class="admin-card">
+    <h1 class="admin-title m-0">Créer un nouveau pays</h1>
+    <p class="admin-sub">Veuillez remplir le formulaire ci-dessous.</p>
+    <% if (errorMessage) { %>
+      <p class="errorMessage mt-1"><%= errorMessage %></p>
+    <% } %>
+  </div>
+
+  <form class="admin-card admin-form" action="" method="POST" novalidate>
+    <div class="form-row">
+      <label for="name">Nom du pays</label>
+      <input type="text" name="name" id="name" required>
+    </div>
+
+    <div class="form-actions">
+      <button class="button" type="submit">Créer</button>
+      <a class="button ghost" href="/admin">Retour à l’administration</a>
+    </div>
+  </form>
+</main>
+
+<%- include ("partials/footer.ejs") %>

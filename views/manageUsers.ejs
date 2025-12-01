@@ -1,0 +1,138 @@
+<%- include("partials/header.ejs") %>
+<main class="admin-main">
+    <h1>Gestion des utilisateurs</h1>
+
+    <% if (successMessage) {%>
+        <p class="successMessage"><%= successMessage %></p>
+    <% } %>
+    <% if (errorMessage) {%>
+        <p class="errorMessage"><%= errorMessage %></p>
+    <% } %>
+
+    <form class="admin-filters" action="/admin/users" method="GET" novalidate>
+        <div class="filters-row">
+            <div class="form-row">
+            <label for="q">Recherche</label>
+            <input type="text" id="q" name="q" placeholder="Email, nom, prénom">
+            </div>
+
+            <div class="form-row">
+            <label for="role_id">Rôle</label>
+            <select id="role_id" name="role_id">
+                <option value="">Tous</option>
+                <% (typeof roles !== 'undefined' ? roles : []).forEach(r => { %>
+                <option value="<%= r.id %>"><%= r.name %></option>
+                <% }) %>
+            </select>
+            </div>
+
+            <div class="form-row">
+            <label for="city">Ville</label>
+            <input type="text" id="city" name="city" placeholder="Paris, Lyon...">
+            </div>
+
+            <div class="form-row">
+            <label for="sort">Trier par</label>
+            <select id="sort" name="sort">
+                <option value="mail_asc">Email (A → Z)</option>
+                <option value="mail_desc">Email (Z → A)</option>
+                <option value="lastname_asc">Nom (A → Z)</option>
+                <option value="lastname_desc">Nom (Z → A)</option>
+            </select>
+            </div>
+
+            <div class="form-row actions">
+            <button class="button" type="submit">Filtrer</button>
+            <a class="button ghost" href="/admin/users">Réinitialiser</a>
+            </div>
+        </div>
+    </form>
+    <button class="button" id="openCreateModal">➕ Créer/Ajouter un utilisateur</button>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Ville</th>
+                <th>Rôle</th>
+                <th>Date de création</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% users.forEach(user => { %>
+            <tr>
+            <td><%= user.mail %></td>
+            <td><%= user.lastname || "Non défini" %></td>
+            <td><%= user.firstname || "Non défini" %></td>
+            <td><%= user.city || "Non défini" %></td>
+            <td><%= user.role ? user.role.name : "Non défini" %></td>
+            <td><%= new Date(user.created_at).toLocaleDateString("fr-FR") %></td>
+            <td>
+                <button class="button outline" data-id="<%= user.id %>" data-mail="<%= user.mail %>" data-role="<%= user.role?.name || 'user' %>">Modifier</button>
+                <form action="/admin/users/delete/<%= user.id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="button danger" onclick="return confirm('Supprimer cet utilisateur ?')">Supprimer</button>
+                </form>
+            </td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+
+    <!-- MODALE : CRÉER -->
+    <div id="createModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Créer un utilisateur</h2>
+        <form action="/admin/users" method="POST" class="admin-form">
+            <label>Email :</label>
+            <input type="email" name="mail" required>
+
+            <label>Mot de passe :</label>
+            <input type="password" name="password" required>
+
+            <label>Confirmer mot de passe :</label>
+            <input type="password" name="confirmPassword" required>
+
+            <label>Rôle :</label>
+            <select name="role" required>
+                <option value="admin">Admin</option>
+                <option value="partner">Partenaire</option>
+                <option value="user">Utilisateur</option>
+            </select>
+
+            <button type="submit" class="button">Créer</button>
+        </form>
+    </div>
+    </div>
+
+    <!-- MODALE : MODIFIER -->
+    <div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Modifier l’utilisateur</h2>
+        <form id="editUserForm" method="POST">
+        <label>Email :</label>
+        <input type="email" name="mail" id="editMail" required>
+        <label>Rôle :</label>
+        <select name="role" id="editRole" required>
+            <option value="admin">Admin</option>
+            <option value="partner">Partenaire</option>
+            <option value="user">Utilisateur</option>
+        </select>
+
+        <button type="submit" class="button">Mettre à jour</button>
+        </form>
+    </div>
+    </div>
+    
+    <nav class="admin-nav">
+        <ul>
+            <li><a class="button" href="/admin">Retour à l'administration</a></li>
+        </ul>
+    </nav>
+</main>
+<script src="/js/modalHandler.js"></script>
+<%- include("partials/footer.ejs") %>

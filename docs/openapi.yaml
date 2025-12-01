@@ -1,0 +1,464 @@
+openapi: 3.1.0
+info:
+  title: GreenRoots API (Front‑consumed surface)
+  version: 1.0.0
+  description: |
+    API REST de GreenRoots
+    - Montants en **centimes** (integers)
+    - Dates en **ISO‑8601 UTC**
+    - Auth via **JWT**: `Authorization: Bearer <token>`
+servers:
+  - url: http://localhost:3000
+    description: Local
+
+tags:
+  - name: Auth
+  - name: Users
+  - name: Campaigns
+  - name: Trees
+  - name: Wishlist
+  - name: Payments
+  - name: Orders
+  - name: Misc
+
+paths:
+  /api/campaigns/landing:
+    get:
+      tags: [Campaigns]
+      summary: Campagnes mises en avant pour la landing
+      responses:
+        '200':
+          description: Liste des campagnes en vedette
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Campaign' }
+
+  /api/trees/landing:
+    get:
+      tags: [Trees]
+      summary: Arbres mis en avant pour la landing
+      responses:
+        '200':
+          description: Liste d'arbres en vedette
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Tree' }
+
+  /api/contact:
+    post:
+      tags: [Misc]
+      summary: Envoi d'un message de contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mail, message]
+              properties:
+                mail: { type: string, format: email }
+                subject: { type: string, nullable: true }
+                message: { type: string, minLength: 1 }
+      responses:
+        '204':
+          description: Message reçu
+
+  /api/campaigns:
+    get:
+      tags: [Campaigns]
+      summary: Lister les campagnes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Campaign' }
+
+  /api/campaigns/{id}:
+    get:
+      tags: [Campaigns]
+      summary: Détails d'une campagne
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Campagne
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Campaign' }
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/trees:
+    get:
+      tags: [Trees]
+      summary: Lister les arbres
+      parameters:
+        - in: query
+          name: campaign_id
+          schema: { type: integer }
+          description: Filtrer par campagne
+        - in: query
+          name: ids
+          schema:
+            type: string
+            example: "1,2,3"
+          description: Liste d'IDs séparés par des virgules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Tree' }
+
+  /api/trees/{id}:
+    get:
+      tags: [Trees]
+      summary: Détails d'un arbre
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Arbre
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Tree' }
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/wishlists:
+    get:
+      tags: [Wishlist]
+      summary: Récupérer la wishlist de l'utilisateur
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Tree' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/wishlists/{id}:
+    post:
+      tags: [Wishlist]
+      summary: Ajouter un arbre à la wishlist
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '201':
+          description: Ajouté
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags: [Wishlist]
+      summary: Retirer un arbre de la wishlist
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Supprimé
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Authentification (JWT)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: Login successful }
+                  token: { type: string }
+                  user:
+                    type: object
+                    properties:
+                      id: { type: integer }
+                      mail: { type: string, format: email }
+                      role: { type: string, example: user }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/users/me:
+    get:
+      tags: [Users]
+      summary: Profil courant
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    patch:
+      tags: [Users]
+      summary: Mettre à jour le profil
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserUpdateInput' }
+      responses:
+        '200':
+          description: Mis à jour
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      tags: [Users]
+      summary: Supprimer le compte
+      security: [{ bearerAuth: [] }]
+      responses:
+        '204':
+          description: Supprimé
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/users/me/password:
+    patch:
+      tags: [Users]
+      summary: Modifier le mot de passe
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [old_password, new_password]
+              properties:
+                old_password: { type: string }
+                new_password: { type: string, minLength: 8 }
+      responses:
+        '204':
+          description: Modifié
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/payments/create-payment-intent:
+    post:
+      tags: [Payments]
+      summary: Créer un PaymentIntent Stripe
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PaymentIntentInput' }
+      responses:
+        '200':
+          description: Client secret
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientSecret: { type: string }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/orders/by-payment-intent/{id}:
+    get:
+      tags: [Orders]
+      summary: Récupérer la commande par PaymentIntent id (Stripe)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Commande
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/users/me/orders:
+    get:
+      tags: [Orders]
+      summary: Lister les commandes de l'utilisateur courant
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Commandes
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Order' }
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    UnauthorizedError:
+      description: Auth manquante ou invalide
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    ValidationError:
+      description: Erreur de validation
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFoundError:
+      description: Ressource introuvable
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            type: { type: string }
+            message: { type: string }
+            code: { type: string }
+            details: { type: object, nullable: true }
+
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        firstname: { type: string, nullable: true }
+        lastname: { type: string, nullable: true }
+        mail: { type: string, format: email }
+        role: { type: string, example: user }
+
+    UserUpdateInput:
+      type: object
+      properties:
+        firstname: { type: string, nullable: true }
+        lastname: { type: string, nullable: true }
+        address_number: { type: string, nullable: true }
+        address_streetname: { type: string, nullable: true }
+        postal_code: { type: string, nullable: true }
+        city: { type: string, nullable: true }
+        phone_number: { type: string, nullable: true }
+
+    LoginInput:
+      type: object
+      required: [mail, password]
+      properties:
+        mail: { type: string, format: email }
+        password: { type: string }
+
+    Campaign:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string, nullable: true }
+        begin_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        image: { type: string, nullable: true }
+        country_id: { type: integer }
+
+    Tree:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        latin_name: { type: string }
+        price: { type: integer, description: "centimes" }
+        quantity: { type: integer }
+        stock: { type: integer }
+        image: { type: string, nullable: true }
+        specie_id: { type: integer }
+        campaign_id: { type: integer, nullable: true }
+
+    OrderLine:
+      type: object
+      properties:
+        id: { type: integer }
+        tree_id: { type: integer, nullable: true }
+        tree_name: { type: string }
+        quantity: { type: integer, minimum: 1 }
+        unit_price: { type: integer, description: "centimes" }
+        total_price: { type: integer, description: "centimes" }
+
+    Order:
+      type: object
+      properties:
+        id: { type: integer }
+        order_number: { type: string }
+        total_price: { type: integer, description: "centimes" }
+        payment_intent_id: { type: string, nullable: true }
+        created_at: { type: string, format: date-time, nullable: true }
+        user_id: { type: integer }
+        order_lines:
+          type: array
+          items: { $ref: '#/components/schemas/OrderLine' }
+
+    PaymentIntentInput:
+      type: object
+      required: [amount, items]
+      properties:
+        amount: { type: integer, description: "total en centimes" }
+        items:
+          type: array
+          items:
+            type: object
+            required: [tree_id, quantity, unit_price]
+            properties:
+              tree_id: { type: integer }
+              quantity: { type: integer, minimum: 1 }
+              unit_price: { type: integer, description: "centimes" }

@@ -1,0 +1,51 @@
+{
+  "name": "projet-greenroots-back",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "db:create": "node ./config/migrations/01.create-tables.js",
+    "db:seed": "node ./config/migrations/02.seed-tables.js",
+    "db:reset": "npm run db:create && npm run db:seed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/O-clock-Cambridge/projet-greenroots-back.git"
+  },
+  "keywords": [],
+  "author": "TonySaes, ManuelAndreolle, MaximeGuibert, SébastienArantes, AnthonyJoachim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/O-clock-Cambridge/projet-greenroots-back/issues"
+  },
+  "homepage": "https://github.com/O-clock-Cambridge/projet-greenroots-back#readme",
+  "description": "",
+  "dependencies": {
+    "argon2": "^0.44.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-session": "^1.18.2",
+    "express-xss-sanitizer": "^2.0.1",
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.3",
+    "stripe": "^19.1.0",
+    "swagger-ui-express": "^5.0.1",
+    "ulidx": "^2.4.1",
+    "xss": "^1.0.15",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "prettier": "^3.6.2"
+  }
+}

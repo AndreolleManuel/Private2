@@ -1,0 +1,118 @@
+<%- include("partials/header.ejs") %>
+
+<main class="admin-main">
+  <div class="admin-card" style="align-items: stretch;">
+    <div class="admin-toolbar">
+      <h1 class="admin-title m-0">
+        Commande <%= order.order_number %>
+      </h1>
+
+      <!-- Status payment label -->
+      <% 
+        const status = order.payment_intent_draft?.status || "pending"; 
+        let badgeClass = "";
+        let statusLabel = "";
+
+        switch (status) {
+          case "completed":
+            badgeClass = "completed";
+            statusLabel = "Paiement complété";
+            break;
+          case "failed":
+            badgeClass = "failed";
+            statusLabel = "Paiement échoué";
+            break;
+          default:
+            badgeClass = "pending";
+            statusLabel = "Paiement en attente";
+        }
+      %>
+
+      <span class="badge <%= badgeClass %>" style="align-self:center;">
+        <%= statusLabel %>
+      </span>
+    </div>
+
+
+    <!-- Order Information -->
+    <div class="admin-grid cols-2 mt-2">
+      <section class="admin-card" style="text-align:left;">
+        <h2 class="m-0">Client</h2>
+        <p class="admin-sub">Informations de facturation</p>
+        <div class="mt-1" style="display:grid; gap:6px;">
+          <div><strong>Nom :</strong>
+            <%= (order.user?.firstname || '') + ' ' + (order.user?.lastname || '') %>
+          </div>
+          <div><strong>Email :</strong>
+            <% if (order.user?.mail) { %>
+              <a href="mailto:<%= order.user.mail %>"><%= order.user.mail %></a>
+            <% } else { %>
+              -
+            <% } %>
+          </div>
+            <div><strong>Téléphone :</strong> <%= order.user?.phone_number || '-' %></div>
+            <div><strong>Adresse :</strong>
+            <div>
+                <%= order.user.address_number || '' %> <%= order.user.address_streetname || '' %><br>
+                <%= order.user.postal_code || '' %> <%= order.user.city || '' %><br>
+                <%= order.user.country_name || '' %>
+            </div>
+        </div>
+      </section>
+
+      <section class="admin-card" style="text-align:left;">
+        <h2 class="m-0">Commande</h2>
+        <p class="admin-sub">Récapitulatif</p>
+        <div class="mt-1" style="display:grid; gap:6px;">
+          <div><strong>N° :</strong> <%= order.order_number %></div>
+          <div><strong>Total :</strong> <%= (order.total_price / 100).toFixed(2) %> €</div>
+          <div><strong>Identification de paiement :</strong> <%= order.payment_intent_draft?.id || '-' %></div>
+          <% if (order.created_at) { %>
+            <div><strong>Créée le :</strong> <%= new Date(order.created_at).toLocaleString('fr-FR') %></div>
+          <% } %>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Order Lines -->
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Arbre</th>
+          <th>Qté</th>
+          <th>Prix unitaire</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let subtotal = 0; %>
+        <% order.order_lines.forEach(l => { %>
+          <% subtotal += (l.total_price || 0); %>
+          <tr>
+            <td>
+              <%= l.tree_name %>
+            </td>
+            <td><%= l.quantity %></td>
+            <td><%= (l.unit_price / 100).toFixed(2) %> €</td>
+            <td><strong><%= (l.total_price / 100).toFixed(2) %> €</strong></td>
+          </tr>
+        <% }) %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="3" style="text-align:right;">Total payé</th>
+          <th><%= (order.total_price / 100).toFixed(2) %> €</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-1" style="justify-content:flex-end;">
+    <a href="/admin/orders" class="button ghost">Retour aux commandes</a>
+  </div>
+</main>
+
+<%- include("partials/footer.ejs") %>
