@@ -1,0 +1,212 @@
+/* ===========================================
+   🌍 GLOBAL RESET & TYPOGRAPHY
+   =========================================== */
+
+/* --- Box sizing & font normalization --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- Accessibility & text rendering --- */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+/* --- Core body setup --- */
+body {
+  line-height: 1.5;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+/* --- Root layout container --- */
+main {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-bottom: 1vh;
+  margin-bottom: 3vh;
+}
+
+/* --- Media elements reset --- */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* --- Form & interactive elements --- */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* --- Text wrapping behavior --- */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/* --- Isolation for app roots --- */
+#root, #__next {
+  isolation: isolate;
+}
+
+
+/* ===========================================
+   🧱 GLOBAL GRID SYSTEM
+   =========================================== */
+
+/* --- Reusable grid layouts for cards --- */
+.grid-cards,
+.tree-card-container,
+.campaign-catalog-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  justify-items: stretch;
+  align-content: stretch;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 1rem 1rem;
+  overflow: hidden;
+}
+
+/* 💻 Tablets */
+@media (max-width: 1024px) {
+  .grid-cards,
+  .tree-card-container,
+  .campaign-catalog-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+  }
+}
+
+/* 📱 Mid-sized mobile */
+@media (max-width: 768px) {
+  .grid-cards,
+  .tree-card-container,
+  .campaign-catalog-container {
+    grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+}
+
+/* 📱 Small mobile */
+@media (max-width: 435px) {
+  .tree-card-container,
+  .grid-cards,
+  .card-campaign-container {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+}
+
+
+/* ===========================================
+   ✨ ANIMATIONS
+   =========================================== */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ===========================================
+   📱 RESPONSIVE TEXT (Campaign Cards)
+   =========================================== */
+@media (max-width: 515px) {
+  .card-campaign-container .campaign-card {
+    font-size: 0.9rem;
+  }
+
+  .card-campaign-container .campaign-card h2,
+  .card-campaign-container .campaign-card h3 {
+    font-size: 1rem;
+  }
+
+  .card-campaign-container .campaign-card p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .card-campaign-container .campaign-card button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+
+/* ===========================================
+   🏷️ SECTION TITLES
+   =========================================== */
+
+/* --- Main section heading style --- */
+.section-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 2rem 1rem 2rem 1rem;
+  margin: 0 0 3rem;
+
+  /* Soft organic gradient */
+  background: linear-gradient(90deg, #2d572c, #4eb64e, #2d572c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  /* Light shadow for depth */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  margin: 0 0 3.5rem;
+  position: relative;
+}
+
+/* --- Decorative underline bar --- */
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -1rem;
+  width: 70px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #2e7d32, #6dd47e);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+
+/* --- Hover interaction --- */
+.section-title:hover::after {
+  width: 300px;
+  background: linear-gradient(90deg, #4caf50, #81c784);
+}
